@@ -1,0 +1,6 @@
+@DWQueueAPI_HostAddress = http://localhost:5266
+
+GET {{DWQueueAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
