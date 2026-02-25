@@ -30,20 +30,38 @@ namespace DWQueueAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByID(int id)
         {
-            var employee = await _employeeService.GetEmployeeByIDAsync(id);
-            if (employee == null)
+            try
             {
-                return NotFound("Employee دot found");
+                var employee = await _employeeService.GetEmployeeByIDAsync(id);
+                if (employee == null)
+                {
+                    return NotFound("Employee دot found");
+                }
+                return Ok(employee);
             }
-            return Ok(employee);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+
+            }
+            
         }
 
         // POST api/<ValuesController>
         [HttpPost]
         public async Task<IActionResult> Add(Employees employee)
         {
-            await _employeeService.AddEmployeeAsync(employee);
-            return Ok("Employee added successfully");
+            try
+            {
+                await _employeeService.AddEmployeeAsync(employee);
+                return Ok("Employee added successfully");
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+            
         }
 
         // PUT api/<ValuesController>/5
