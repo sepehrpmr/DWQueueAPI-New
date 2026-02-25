@@ -8,7 +8,7 @@ namespace DWQueueAPI.Data
     {
         public DbSet<Departments> Departmentss { get; set; }
         public DbSet<EmployeeProjects> EmployeeProjectss { get; set; }
-        public DbSet<Employees> Employeess { get; set; }
+        public  DbSet<Employees> Employeess { get; set; }
         
         public DbSet<Projects> Projectss { get; set; }
         public DbSet<ProjectTasks> ProjectTaskss { get; set; }

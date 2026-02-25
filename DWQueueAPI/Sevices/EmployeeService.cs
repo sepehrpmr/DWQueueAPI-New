@@ -1,10 +1,13 @@
 ﻿using DWQueueAPI.Data;
 using DWQueueAPI.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DWQueueAPI.Sevices
 {
     public class EmployeeService
     {
+        // not async for now, will look into making this async later on, not sure if it will be worth it or not but it will be good practice for me to learn how to do it properly
+        // not sure if this is the right way to do it but it works for now, will look into better ways to do this later on
         private readonly DWQueueContext _context;
 
         public EmployeeService(DWQueueContext context)
@@ -12,44 +15,99 @@ namespace DWQueueAPI.Sevices
             _context = context;
         }
 
+       
+        //public void UpdateEmployee(Employees employee)
+        //{
+        //    var existingEmployee = _context.Employeess.FirstOrDefault(e => e.EmployeeID == employee.EmployeeID);
+        //    if (existingEmployee != null)
+        //    {
+        //        existingEmployee.Name = employee.Name;
 
-        public void UpdateEmployee(Employees employee)
+
+        //        existingEmployee.Position = employee.Position;
+
+        //        existingEmployee.HireDate = employee.HireDate;
+        //        existingEmployee.DepartmentID = employee.DepartmentID;
+        //        _context.SaveChanges();
+        //    }
+        //}
+
+        //public void DeleteEmployee(int id)
+        //{
+        //    var employee = _context.Employeess.FirstOrDefault(e => e.EmployeeID == id);
+        //    if (employee != null)
+        //    {
+        //        _context.Employeess.Remove(employee);
+        //        _context.SaveChanges();
+        //    }
+        //}
+
+        //public void AddEmployee(Employees employee)
+        //{
+        //    _context.Employeess.Add(employee);
+        //    _context.SaveChanges();
+        //}
+
+        //public Employees GetEmployeeByID(int id)
+        //{
+        //    return _context.Employeess.FirstOrDefault(e => e.EmployeeID == id);
+        //}
+
+        //public List<Employees> GetAllEmployees()
+        //{
+        //    return _context.Employeess.ToList();
+        //}
+
+
+        // lets do async versions of my practice methods,
+
+        public async Task UpdateEmployeeAsync(Employees employee)
         {
-            var existingEmployee = _context.Employeess.FirstOrDefault(e => e.EmployeeID == employee.EmployeeID);
+            var existingEmployee = await _context.Employeess.FirstOrDefaultAsync(e => e.EmployeeID == employee.EmployeeID);
             if (existingEmployee != null)
             {
                 existingEmployee.Name = employee.Name;
                 existingEmployee.Position = employee.Position;
                 existingEmployee.HireDate = employee.HireDate;
                 existingEmployee.DepartmentID = employee.DepartmentID;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
-        public void DeleteEmployee(int id)
+
+
+        public async Task DeleteEmployeeAsync(int id)
         {
-            var employee = _context.Employeess.FirstOrDefault(e => e.EmployeeID == id);
+            var employee = await _context.Employeess.FirstOrDefaultAsync(e => e.EmployeeID == id);
             if (employee != null)
             {
                 _context.Employeess.Remove(employee);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
-        public void AddEmployee(Employees employee)
+
+
+        public async Task AddEmployeeAsync(Employees employee)
         {
-            _context.Employeess.Add(employee);
-            _context.SaveChanges();
+            await _context.Employeess.AddAsync(employee);
+            await _context.SaveChangesAsync();
         }
 
-        public Employees GetEmployeeByID(int id)
+
+        public async Task<Employees> GetEmployeeByIDAsync(int id)
         {
-            return _context.Employeess.FirstOrDefault(e => e.EmployeeID == id);
+            return await _context.Employeess.FirstOrDefaultAsync(e => e.EmployeeID == id);
         }
 
-        public List<Employees> GetAllEmployees()
+
+
+        public async Task<List<Employees>> GetAllEmployeesAsync()
         {
-            return _context.Employeess.ToList();
+            return await _context.Employeess.ToListAsync();
         }
+
+
+       
     }
 }
