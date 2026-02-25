@@ -21,8 +21,17 @@ namespace DWQueueAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var employees = await _employeeService.GetAllEmployeesAsync();
-            return Ok(employees);
+            try
+            {
+                var employees = await _employeeService.GetAllEmployeesAsync();
+                return Ok(employees);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+            
         }
 
 
@@ -66,18 +75,41 @@ namespace DWQueueAPI.Controllers
 
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Employees employee)
+        public async Task<IActionResult> Update(int id,[FromBody] Employees employee)
         {
-            await _employeeService.UpdateEmployeeAsync(employee);
-            return Ok("Employee pdated successfully");
+
+            if (id != employee.EmployeeID)
+                return BadRequest("ID mismatch");
+
+            try
+            {
+                await _employeeService.UpdateEmployeeAsync(employee);
+                return Ok("Employee updated successfully");
+                //return Ok("Employee pdated successfully");
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+            
         }
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _employeeService.DeleteEmployeeAsync(id);
-            return Ok("Employee deleted successfully");
+            try
+            {
+                await _employeeService.DeleteEmployeeAsync(id);
+                return Ok("Employee deleted successfully");
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+           
         }
     }
 }
