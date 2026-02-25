@@ -11,9 +11,6 @@ namespace DWQueueAPI.Data
         public DbSet<Employees> Employeess { get; set; }
         
         public DbSet<Projects> Projectss { get; set; }
-
-
-
         public DbSet<ProjectTasks> ProjectTaskss { get; set; }
         public DbSet<Tasks> Taskss { get; set; }
 
