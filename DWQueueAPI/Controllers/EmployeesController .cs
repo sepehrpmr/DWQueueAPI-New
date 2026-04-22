@@ -1,4 +1,5 @@
 ﻿using DWQueueAPI.Data.Entities;
+using DWQueueAPI.DTOs;
 using DWQueueAPI.Sevices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,8 +23,18 @@ namespace DWQueueAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             try
-            {
+            {   
+                // ۱. گرفتن لیست اصلی از سرویس
                 var employees = await _employeeService.GetAllEmployeesAsync();
+                var response = employees.Select(e => new EmployeeResponseDto
+                {
+                    Id = e.EmployeeID,
+                    Name = e.Name,
+                    Position = e.Position,
+                    HireDate = (DateTime)e.HireDate,
+                    DepartmentID = (int)e.DepartmentID
+
+                }).ToList();
                 return Ok(employees);
             }
             catch (Exception ex)
@@ -46,6 +57,15 @@ namespace DWQueueAPI.Controllers
                 {
                     return NotFound("Employee دot found");
                 }
+
+                var response = new EmployeeResponseDto
+                {
+                    Id = employee.EmployeeID,
+                    Name = employee.Name,
+                    Position = employee.Position
+                };
+
+
                 return Ok(employee);
             }
             catch (Exception ex)
@@ -58,32 +78,52 @@ namespace DWQueueAPI.Controllers
 
         // POST api/<ValuesController>
         [HttpPost]
-        public async Task<IActionResult> Add(Employees employee)
+        public async Task<IActionResult> Add([FromBody] CreateEmployeeDto createDto)
         {
             try
             {
+                Employees employee = new Employees
+                {
+                    Name = createDto.Name,
+                    Position = createDto.Position,
+                    HireDate = createDto.HireDate,
+                    DepartmentID = createDto.DepartmentID
+                };
                 await _employeeService.AddEmployeeAsync(employee);
                 return Ok("Employee added successfully");
             }
+            //catch (Exception ex)
+            //{
+
+            //    return StatusCode(500, $"Internal server error: {ex.Message}");
+            //}
+
             catch (Exception ex)
             {
-
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                // این خط باعث می‌شه ارور اصلی دیتابیس رو بخونیم
+                var realError = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                return StatusCode(500, $"Database Error: {realError}");
             }
-            
+
         }
 
         // PUT api/<ValuesController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id,[FromBody] Employees employee)
+        [HttpPut(nameof(Update))]
+        public async Task<IActionResult> Update([FromBody] UpdateEmployeeDto updateEmployee)
         {
 
-            if (id != employee.EmployeeID)
-                return BadRequest("ID mismatch");
+            Employees employees = new Employees
+            {
+                EmployeeID = updateEmployee.ID,
+                Name = updateEmployee.Name,
+                Position = updateEmployee.Position,
+                HireDate = updateEmployee.HireDate,
+                DepartmentID = updateEmployee.DepartmentID
+            };
 
             try
             {
-                await _employeeService.UpdateEmployeeAsync(employee);
+                await _employeeService.UpdateEmployeeAsync(employees);
                 return Ok("Employee updated successfully");
                 //return Ok("Employee pdated successfully");
             }
