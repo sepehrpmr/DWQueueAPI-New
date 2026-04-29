@@ -1,5 +1,6 @@
 
 using DWQueueAPI.Data;
+using DWQueueAPI.Services;
 using DWQueueAPI.Sevices;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,7 @@ namespace DWQueueAPI
             // Add services to the container.
 
             builder.Services.AddScoped<EmployeeService>();
+            builder.Services.AddScoped<DepartmentService>();
             builder.Services.AddLogging();
 
             builder.Services.AddDbContext<DWQueueContext>(options =>

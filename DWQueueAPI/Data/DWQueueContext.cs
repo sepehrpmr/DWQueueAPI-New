@@ -81,6 +81,14 @@ namespace DWQueueAPI.Data
             // 6. Departments (فایل قبلی که فرستادی)
             modelBuilder.Entity<Departments>().HasKey(d => d.DepartmentID);
 
+            modelBuilder.Entity<Departments>(entity =>
+            {
+                // این خط به EF می‌گه دقیقاً دنبال کدوم جدول بگرده
+                entity.ToTable("Departments");
+
+               
+            });
+
             base.OnModelCreating(modelBuilder);
         }
 

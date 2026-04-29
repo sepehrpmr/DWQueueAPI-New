@@ -35,7 +35,7 @@ namespace DWQueueAPI.Controllers
                     DepartmentID = (int)e.DepartmentID
 
                 }).ToList();
-                return Ok(employees);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -44,6 +44,7 @@ namespace DWQueueAPI.Controllers
             }
             
         }
+
 
 
         // GET api/<ValuesController>/5
@@ -66,7 +67,7 @@ namespace DWQueueAPI.Controllers
                 };
 
 
-                return Ok(employee);
+                return Ok(response);
             }
             catch (Exception ex)
             {
