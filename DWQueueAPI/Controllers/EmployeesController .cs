@@ -1,5 +1,5 @@
 ﻿using DWQueueAPI.Data.Entities;
-using DWQueueAPI.DTOs;
+using DWQueueAPI.DTOs.EmployeeDTOs;
 using DWQueueAPI.Sevices;
 using Microsoft.AspNetCore.Mvc;
 

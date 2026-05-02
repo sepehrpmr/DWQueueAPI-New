@@ -88,6 +88,12 @@ namespace DWQueueAPI.Data
 
                
             });
+            modelBuilder.Entity<Projects>().HasKey(p => p.ProjectID);
+
+            modelBuilder.Entity<Projects>(entity =>
+            {
+                entity.ToTable("Projects");
+            });
 
             base.OnModelCreating(modelBuilder);
         }

@@ -16,6 +16,7 @@ namespace DWQueueAPI
 
             builder.Services.AddScoped<EmployeeService>();
             builder.Services.AddScoped<DepartmentService>();
+            builder.Services.AddScoped<ProjectService>();
             builder.Services.AddLogging();
 
             builder.Services.AddDbContext<DWQueueContext>(options =>
