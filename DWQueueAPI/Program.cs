@@ -1,5 +1,6 @@
 
 using DWQueueAPI.Data;
+using DWQueueAPI.Interfaces;
 using DWQueueAPI.Services;
 using DWQueueAPI.Sevices;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,8 @@ namespace DWQueueAPI
             builder.Services.AddScoped<EmployeeService>();
             builder.Services.AddScoped<DepartmentService>();
             builder.Services.AddScoped<ProjectService>();
+            builder.Services.AddTransient<IMessageService, MessageService>();
+
             builder.Services.AddLogging();
 
             builder.Services.AddDbContext<DWQueueContext>(options =>
