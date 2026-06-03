@@ -1,5 +1,6 @@
 ﻿using DWQueueAPI.Data;
 using DWQueueAPI.Data.Entities;
+using DWQueueAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace DWQueueAPI.Sevices
@@ -9,10 +10,12 @@ namespace DWQueueAPI.Sevices
         // not async for now, will look into making this async later on, not sure if it will be worth it or not but it will be good practice for me to learn how to do it properly
         // not sure if this is the right way to do it but it works for now, will look into better ways to do this later on
         private readonly DWQueueContext _context;
+        //private readonly IMessageService  _messageService;
 
-        public EmployeeService(DWQueueContext context)
+        public EmployeeService(DWQueueContext context ) //IMessageService  messageService)
         {
             _context = context;
+            //_messageService = messageService;
         }
 
        

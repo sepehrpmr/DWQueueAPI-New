@@ -1,0 +1,89 @@
+﻿# version: "3.8"
+
+# services:
+#   api:
+#     image: dw-queue-api:latest
+#     container_name: dwqueue-api
+#     ports:
+#       - "5000:8080"
+#     depends_on:
+#       - db
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
+#       - ConnectionStrings__DefaultConnection=Server=db;Database=DWQueueDb;User=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True
+
+#   db:
+#     image: mcr.microsoft.com/mssql/server:2022-latest
+#     container_name: dwqueue-sql
+#     environment:
+#       SA_PASSWORD: "123321Aa!"
+#       ACCEPT_EULA: "Y"
+#     ports:
+#       - "1433:1433"
+#     volumes:
+#       - sql_data:/var/opt/mssql
+
+# volumes:
+#   sql_data:
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: DWQueueAPI/Dockerfile # آدرس دقیق داکرفایل پروژه API
+    image: dwqueue-api:latest
+    container_name: dwqueue-api
+    ports:
+      - "5000:8080"
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # - ConnectionStrings__DefaultConnection=Server=db;Database=DWQueueDb;User=sa;Password=123321Aa!;TrustServerCertificate=True
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: db
+    environment:
+      SA_PASSWORD: "123321Aa!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: dwqueue-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: dwqueue-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: DWNotificationService/Dockerfile
+    container_name: dwqueue-notification
+    depends_on:
+      - rabbitmq
+      - mailhog
+    environment:
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - Smtp__Host=mailhog
+      - Smtp__Port=1025
+
+volumes:
+  sql_data:

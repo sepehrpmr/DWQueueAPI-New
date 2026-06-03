@@ -2,6 +2,8 @@
 {
     public interface IMessageService
     {
-        string GetHello();
+        
+            void PublishMessage<T>(string queueName, T message);
+        
     }
 }
