@@ -1,4 +1,4 @@
-﻿namespace DWQueueAPI.Events
+﻿namespace DWQueue.Events
 {
     public class LeaveApprovedEvent
     {

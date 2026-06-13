@@ -25,6 +25,7 @@ namespace DWQueueAPI.Middlewares
         }
 
 
+
         private static Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             //var response = new { message = ex.Message };

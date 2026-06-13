@@ -1,11 +1,13 @@
-﻿
+﻿using DWQueue.Events; // 👈 معرفی نام‌فضا به کل فایل
 using DWQueueAPI.Data;
-using DWQueueAPI.Interfaces;
+//using DWQueueAPI.Interfaces;
 using DWQueueAPI.Mappings;
 using DWQueueAPI.Middlewares;
 using DWQueueAPI.Services;
 using DWQueueAPI.Sevices;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace DWQueueAPI
 {
@@ -21,7 +23,20 @@ namespace DWQueueAPI
             builder.Services.AddScoped<DepartmentService>();
             builder.Services.AddScoped<ProjectService>();
             builder.Services.AddScoped<EmployeeLeaveService>();
-            builder.Services.AddTransient<IMessageService, MessageService>();
+            //builder.Services.AddTransient<IMessageService, MessageService>();   this for before add mass transit
+            builder.Services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    var rabbitHost = builder.Configuration["RabbitMQ:HostName"] ?? "localhost";
+                    cfg.Host(rabbitHost, "/", h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+                    cfg.Message<LeaveApprovedEvent>(m => m.SetEntityName("LeaveApprovedEventExchange"));
+                });
+            });
             //builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 
@@ -48,7 +63,7 @@ namespace DWQueueAPI
                 {
                     var context = services.GetRequiredService<DWQueueContext>();
                     // این دستور بررسی می‌کند؛ اگر دیتابیس یا جدولی در داکر نباشد، خودکار آن را می‌سازد
-                     context.Database.MigrateAsync();
+                     context.Database.Migrate();
                 }
                 catch (Exception ex)
                 {
