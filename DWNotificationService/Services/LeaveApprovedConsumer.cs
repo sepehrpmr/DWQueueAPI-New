@@ -19,7 +19,7 @@ namespace DWNotificationService.Services
         {
             var message = context.Message;
 
-            // لاگ برای اطمینان از اینکه پیام اصلاً به ورکر می‌رسد یا نه
+            
             Console.WriteLine($"\n🚀 >>> [Consumer] پیام تایید مرخصی برای ایمیل دریافت شد: {message.EmployeeEmail}");
 
             try
@@ -30,7 +30,7 @@ namespace DWNotificationService.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"❌ >>> [Consumer] خطای غیرمنتظره در کانتینر رخ داد: {ex.Message}\n");
-                throw; // ریترای کردن توسط MassTransit
+                throw; 
             }
         }
     }

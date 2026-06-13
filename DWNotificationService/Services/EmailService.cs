@@ -12,12 +12,12 @@ namespace DWNotificationService.Services
         {
             Console.WriteLine($"📧 >>> [EmailService] در حال تلاش برای اتصال به MailHog...");
 
-            // نکته: اگر dwqueue-mailhog خطا داد، این مقدار را به "mailhog" (نام سرویس در داکر کامپوز) تغییر دهید
+            
             using (var client = new SmtpClient("dwqueue-mailhog", 1025))
             {
                 client.EnableSsl = false;
                 client.Credentials = new NetworkCredential("", "");
-                client.Timeout = 10000; // تایم‌اوت ۱۰ ثانیه‌ای برای جلوگیری از معطل شدن و قفل کردن کانتینر
+                client.Timeout = 10000; 
 
                 var mailMessage = new MailMessage
                 {

@@ -30,14 +30,14 @@ namespace DWQueueAPI.Services
 
         public async Task<EmployeeLeaves> AddLeaveAsync(EmployeeLeaves leave)
         {
-            // ۱. ذخیره مرخصی در دیتابیس
+            
             _context.EmployeeLeaves.Add(leave);
             await _context.SaveChangesAsync();
 
-            // ۲. لود کردن اطلاعات کارمند متصل به این مرخصی برای دسترسی به نام و ایمیل واقعی
+            
             await _context.Entry(leave).Reference(l => l.Employee).LoadAsync();
 
-            // ۳. ساخت آبجکت پیام برای ارسال به صف MassTransit
+            
             var leaveEvent = new LeaveApprovedEvent
             {
                 
@@ -48,7 +48,7 @@ namespace DWQueueAPI.Services
                 EndDate = leave.EndDate
             };
 
-            // ۴. ارسال شیک و آسنکرون پیام به رابیت‌ام‌کیو توسط MassTransit
+            
             await _publishEndpoint.Publish(leaveEvent);
 
             return leave;
