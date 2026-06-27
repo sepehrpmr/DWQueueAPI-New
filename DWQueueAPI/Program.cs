@@ -1,4 +1,6 @@
-﻿using DWQueue.Events; // 👈 معرفی نام‌فضا به کل فایل
+﻿using Microsoft.OpenApi.Models;
+using System.Text;
+using DWQueue.Events; // 👈 معرفی نام‌فضا به کل فایل
 using DWQueueAPI.Data;
 //using DWQueueAPI.Interfaces;
 using DWQueueAPI.Mappings;
@@ -6,7 +8,9 @@ using DWQueueAPI.Middlewares;
 using DWQueueAPI.Services;
 using DWQueueAPI.Sevices;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace DWQueueAPI
@@ -48,10 +52,58 @@ namespace DWQueueAPI
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "DWQueue API", Version = "v1" });
+
+                // ۱. تعریف نحوه دریافت توکن (Security Definition)
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Description = "توکن خود را به این صورت وارد کنید: Bearer {Your_Token}\n\nمثال: Bearer eyJhbGciOi...",
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                // ۲. اعمال قانون قفل روی تمام اندپوینت‌های سواگر (Security Requirement)
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                },
+            new string[] {}
+                    }
+                });
+                                }
+                );
 
 
-
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Secret"]))
+            };
+        });
 
             var app = builder.Build();
 
@@ -83,6 +135,7 @@ namespace DWQueueAPI
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
@@ -90,6 +143,4 @@ namespace DWQueueAPI
             app.Run();
         }
     }
-
-    
 }

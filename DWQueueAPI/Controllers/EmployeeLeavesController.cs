@@ -4,6 +4,7 @@ using DWQueueAPI.DTOs.EmployeeDTOs;
 using DWQueueAPI.DTOs.EmployeeLeavesDTOs;
 using DWQueueAPI.Services;
 using DWQueueAPI.Sevices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace DWQueueAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] //for jwt token authentication 
     public class EmployeeLeavesController : ControllerBase
     {
         private readonly EmployeeLeaveService _employeeLeaveService;
