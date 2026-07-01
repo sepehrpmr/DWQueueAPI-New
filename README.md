@@ -92,6 +92,19 @@ docker compose up -d --build
                                                | Worker Serv |
                                                +------+------+
                                                       | (SMTP)
+
+
+Upcoming
+
+✔ Unit Testing
+
+✔ CI/CD
+
+✔ Serilog
+
+✔ Prometheus
+
+✔ Grafana
                                                       v
                                                +------+------+
                                                |   MailHog   |
